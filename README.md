@@ -286,7 +286,6 @@ Main_1_right:dropdown({
         def = false,
         callback = function(value)
             getgenv().Deathstep = value
-            
             if value == false then
                 pcall(function()
                     tween:Cancel()  
@@ -1266,7 +1265,7 @@ spawn(function()
         game:GetService("RunService").Heartbeat:Connect(function() CheckQuest()
             pcall(function()
                 for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-                    if getgenv().LevelFarm or _G.FramDeath and StartMagnet and v.Name == Ms and (v.HumanoidRootPart.Position - PosMon.Position).Magnitude <= 350 then
+                    if getgenv().LevelFarm and StartMagnet and v.Name == Ms and (v.HumanoidRootPart.Position - PosMon.Position).Magnitude <= 350 then
                         v.HumanoidRootPart.CFrame = PosMon
                         v.HumanoidRootPart.CanCollide = false
                         v.HumanoidRootPart.Size = Vector3.new(50,50,50)
@@ -1938,6 +1937,49 @@ spawn(function()
                         end
                     elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress","Detective") == 2 then
                         wait(5)
+                    end
+                end)
+            end
+        end
+    end)
+
+    spawn(function()
+        while wait() do
+            if _G.Auto_New_World then
+                pcall(function()
+                    if game.Players.LocalPlayer.Data.Level.Value >= 700 and World1 then
+                        _G.Auto_Farm_Level = false
+                        if game.Workspace.Map.Ice.Door.CanCollide == true and game.Workspace.Map.Ice.Door.Transparency == 0 then
+                            repeat wait() getgenv().ToTarget(CFrame.new(4851.8720703125, 5.6514348983765, 718.47094726563)) until (CFrame.new(4851.8720703125, 5.6514348983765, 718.47094726563).Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 or not _G.Auto_New_World
+                            wait(1)
+                            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress","Detective")
+                            EquipWeapon("Key")
+                            local pos2 = CFrame.new(1347.7124, 37.3751602, -1325.6488)
+                            repeat wait() getgenv().ToTarget(pos2) until (pos2.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 or not _G.Auto_New_World
+                            wait(3)
+                        elseif game.Workspace.Map.Ice.Door.CanCollide == false and game.Workspace.Map.Ice.Door.Transparency == 1 then
+                            if game:GetService("Workspace").Enemies:FindFirstChild("Ice Admiral [Lv. 700] [Boss]") then
+                                for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                                    if v.Name == "Ice Admiral [Lv. 700] [Boss]" and v.Humanoid.Health > 0 then
+                                        repeat wait()
+                                            AutoHaki()
+                                            EquipWeapon(_G.Select_Weapon)
+                                            v.HumanoidRootPart.CanCollide = false
+                                            v.HumanoidRootPart.Size = Vector3.new(60,60,60)
+                                            v.HumanoidRootPart.Transparency = 1
+                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+                                            game:GetService("VirtualUser"):CaptureController()
+                                            game:GetService("VirtualUser"):Button1Down(Vector2.new(1280, 870),workspace.CurrentCamera.CFrame)
+                                        until v.Humanoid.Health <= 0 or not v.Parent or not _G.Auto_New_World
+                                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
+                                    end
+                                end
+                            else
+                                getgenv().ToTarget(CFrame.new(1347.7124, 37.3751602, -1325.6488))
+                            end
+                        else
+                            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
+                        end
                     end
                 end)
             end
