@@ -101,6 +101,7 @@ local Main_2_Page = window:page({name = "Main 2"})
 local Main_1_left = Main_1_Page:section({name = "// Main //",side = "left",size = 90})
 local Main_1_right = Main_1_Page:section({name = "// Misc //",side = "right",size = 150})
 local Main_2_left = Main_1_Page:section({name = "// Boss //",side = "left",size = 150})
+local Main_2_right = Main_1_Page:section({name = "// Fighting Styles //",side = "right",size = "150"})
 
 local Stats_1_left = Main_2_Page:section({name = "// Stats //",side = "left",size = 200})
 local Stats_1_right = Main_2_Page:section({name = "Main",side = "right",size = 250})
@@ -128,7 +129,7 @@ Main_1_left:toggle({
     name = "Auto ThirdSea",
     def = false,
     callback = function(value)
-        getgenv().SecondSea = value
+        getgenv().ThirdSea = value
 end})
 
 function UseCode(Text)
@@ -246,6 +247,95 @@ Main_1_right:dropdown({
                 end)
             end
     end})
+
+    Main_2_right:toggle({
+        name = "Auto Godhuman",
+        def = false,
+        callback = function(value)
+            getgenv().Godhuman = value
+
+            if value == false then
+                pcall(function()
+                    tween:Cancel()  
+                end)
+            end
+        end
+    })
+
+    Main_2_right:toggle({
+        name = "Auto Superhuman",
+        def = false,
+        callback = function(value)
+            getgenv().Superhuman = value
+
+            if getgenv().Superhuman == true then
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyElectro") 
+            end
+            if value == false then
+                pcall(function()
+                    tween:Cancel()
+                    _G.FramSuper  = false
+                    _G.RiadSuper = false
+                end)
+            end
+        end
+    })
+
+    Main_2_right:toggle({
+        name = "Auto Deathstep",
+        def = false,
+        callback = function(value)
+            getgenv().Deathstep = value
+            
+            if value == false then
+                pcall(function()
+                    tween:Cancel()  
+                end)
+            end
+        end
+    })
+
+    Main_2_right:toggle({
+        name = "Auto Sharkman Karate",
+        def = false,
+        callback = function(value)
+            getgenv().Sharkman_Karate = value
+            
+            if value == false then
+                pcall(function()
+                    tween:Cancel()  
+                end)
+            end
+        end
+    })
+
+    Main_2_right:toggle({
+        name = "Auto Dragon Talon",
+        def = false,
+        callback = function(value)
+            getgenv().Dragon_Talon = value
+            
+            if value == false then
+                pcall(function()
+                    tween:Cancel()  
+                end)
+            end
+        end
+    })
+
+    Main_2_right:toggle({
+        name = "Auto Electric Claw",
+        def = false,
+        callback = function(value)
+            getgenv().Electric_Claw = value
+            
+            if value == false then
+                pcall(function()
+                    tween:Cancel()  
+                end)
+            end
+        end
+    })
 
     Stats_1_left:toggle({
         name = "Auto Stat Melee",
@@ -390,7 +480,7 @@ function CheckQuest()
                 0.258804798, 0, 0.965929627)
             CFramePuk = CFrame.new(-1144.44861, 90.5594559, 4307.25928, -0.998438537, 0, 0.0558618344, 0, 1, 0,
                 -0.0558618344, 0, -0.998438537)
-        elseif MYLEVEL == 60 or MYLEVEL <= 74 then
+        elseif MYLEVEL == 60 or MYLEVEL <= 74 then --change puk
             Ms = "Desert Bandit [Lv. 60]"
             NameQuest = "DesertQuest"
             QuestLv = 1
@@ -503,7 +593,7 @@ function CheckQuest()
                 4.80190776e-09, 1, 5.45760841e-08, -0.238892734, -5.18487475e-08, 0.971045971)
             CFramePuk = CFrame.new(60898.043, 18.4828224, 1550.9906, -0.0750192106, -4.46996573e-09, 0.997182071,
                 3.6461556e-10, 1, 4.51002746e-09, -0.997182071, 7.0192685e-10, -0.0750192106)
-            if    (getgenv().LevelFarm  or  _G.Settings["Auto Farm Level"]) and
+            if    (getgenv().LevelFarm  ) and
                 (CFrameQ.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 3000 then
                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",
                     Vector3.new(61163.8516, 5.43263245, 1819.78418, 1, 6.89280011e-09, 9.74497786e-14, -6.89280011e-09,
@@ -518,7 +608,7 @@ function CheckQuest()
                 4.80190776e-09, 1, 5.45760841e-08, -0.238892734, -5.18487475e-08, 0.971045971)
             CFramePuk = CFrame.new(61885.4063, 18.4828224, 1500.37195, 0.722261012, 4.84021889e-08, -0.691620588,
                 1.27929427e-08, 1, 8.33434299e-08, 0.691620588, -6.90435726e-08, 0.722261012)
-            if    (getgenv().LevelFarm  or  _G.Settings["Auto Farm Level"])and
+            if    (getgenv().LevelFarm  )and
                 (CFrameQ.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 3000 then
                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",
                     Vector3.new(61163.8516, 5.43263245, 1819.78418, 1, 6.89280011e-09, 9.74497786e-14, -6.89280011e-09,
@@ -533,7 +623,7 @@ function CheckQuest()
                 -2.52417198e-09, 1, 7.36076018e-08, -0.200205252, 7.16119786e-08, -0.979754269)
             CFramePuk = CFrame.new(-4630.00635, 866.902954, -1936.76331, -0.656243384, 9.12737941e-12, 0.754549265,
                 3.58402819e-09, 1, 3.10498938e-09, -0.754549265, 4.74195483e-09, -0.656243384)
-            if    (getgenv().LevelFarm  or  _G.Settings["Auto Farm Level"])and
+            if    (getgenv().LevelFarm  )and
                 (CFrameQ.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 3000 then
                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(
                     -4607.82275, 872.54248, -1667.55688))
@@ -547,7 +637,7 @@ function CheckQuest()
                 -1.31181936e-08, 1, -2.40923566e-08, 0.863640666, 2.34745521e-08, 0.504107952)
             CFramePuk = CFrame.new(-7682.69775, 5607.36279, -445.691833, 0.786274791, -4.48163426e-08, -0.617877364,
                 -4.81674345e-09, 1, -7.86622607e-08, 0.617877364, 6.48263239e-08, 0.786274791)
-            if    (getgenv().LevelFarm  or  _G.Settings["Auto Farm Level"])and
+            if    (getgenv().LevelFarm  )and
                 (CFrameQ.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 3000 then
                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(
                     -7894.6176757813, 5547.1416015625, -380.29119873047))
@@ -1176,7 +1266,7 @@ spawn(function()
         game:GetService("RunService").Heartbeat:Connect(function() CheckQuest()
             pcall(function()
                 for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-                    if getgenv().LevelFarm and StartMagnet and v.Name == Ms and (v.HumanoidRootPart.Position - PosMon.Position).Magnitude <= 350 then
+                    if getgenv().LevelFarm or _G.FramDeath and StartMagnet and v.Name == Ms and (v.HumanoidRootPart.Position - PosMon.Position).Magnitude <= 350 then
                         v.HumanoidRootPart.CFrame = PosMon
                         v.HumanoidRootPart.CanCollide = false
                         v.HumanoidRootPart.Size = Vector3.new(50,50,50)
@@ -1195,7 +1285,7 @@ spawn(function()
     spawn(function()
         pcall(function()
             game:GetService("RunService").Stepped:Connect(function()
-                if getgenv().LevelFarm or getgenv().AllBossFarm then
+                if getgenv().LevelFarm or getgenv().AllBossFarm or getgenv().Deathstep then
                     if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
                         local Noclip = Instance.new("BodyVelocity")
                         Noclip.Name = "BodyClip"
@@ -1292,7 +1382,7 @@ spawn(function()
     spawn(function()
         pcall(function()
             game:GetService("RunService").Stepped:Connect(function()
-                if NoclipBoos or getgenv().AllBossFarm then
+                if Noclip5 or NoclipBoos or getgenv().AllBossFarm then
                     for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
                         if v:IsA("BasePart") then
                             v.CanCollide = false    
@@ -1618,6 +1708,238 @@ spawn(function()
                 end)
             else
                 NoclipBoos = false
+            end
+        end
+    end)
+
+
+    ------------------------------------------------------------------- Fughting Styles -------------------------------------------------------------------
+
+    spawn(function()
+        while wait() do
+            pcall(function()
+                if getgenv().Superhuman then                
+                    if game:GetService("Players").LocalPlayer.Data.Beli.Value >= 500000 and (game.Players.LocalPlayer.Character:FindFirstChild("Combat") or game.Players.LocalPlayer.Backpack:FindFirstChild("Combat")) then
+                        getgenv().SelectWeapon = "Combat"
+                        local args = {
+                            [1] = "BuyElectro"
+                        }
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                    elseif game:GetService("Players").LocalPlayer.Data.Beli.Value <= 500000 and (game.Players.LocalPlayer.Character:FindFirstChild("Combat") or game.Players.LocalPlayer.Backpack:FindFirstChild("Combat")) then
+                        getgenv().SelectWeapon = "Combat"
+                    end  
+
+
+                    if (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Electro') and  game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Electro').Level.Value <= 300) or (game.Players.LocalPlayer.Character:FindFirstChild('Electro') and game.Players.LocalPlayer.Character:FindFirstChild('Electro').Level.Value <= 300) then                        
+                        getgenv().SelectWeapon = "Electro"
+                    elseif (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Electro') and  game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Electro').Level.Value >= 300) or (game.Players.LocalPlayer.Character:FindFirstChild('Electro') and game.Players.LocalPlayer.Character:FindFirstChild('Electro').Level.Value >= 300) then                        
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBlackLeg")
+                    end
+
+                    if (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg') and  game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg').Level.Value <= 300) or (game.Players.LocalPlayer.Character:FindFirstChild('Black Leg') and game.Players.LocalPlayer.Character:FindFirstChild('Black Leg').Level.Value <= 300) then                        
+                        getgenv().SelectWeapon = "Black Leg"
+                    elseif (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg') and  game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg').Level.Value >= 300) or (game.Players.LocalPlayer.Character:FindFirstChild('Black Leg') and game.Players.LocalPlayer.Character:FindFirstChild('Black Leg').Level.Value >= 300) then                        
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyFishmanKarate")
+                    end
+
+                    if (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Fishman Karate') and  game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Fishman Karate').Level.Value <= 300) or (game.Players.LocalPlayer.Character:FindFirstChild('Fishman Karate') and game.Players.LocalPlayer.Character:FindFirstChild('Fishman Karate').Level.Value <= 300) then
+                        getgenv().SelectWeapon = "Fishman Karate"
+                    elseif (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Fishman Karate') and  game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Fishman Karate').Level.Value >= 300) or (game.Players.LocalPlayer.Character:FindFirstChild('Fishman Karate') and game.Players.LocalPlayer.Character:FindFirstChild('Fishman Karate').Level.Value >= 300) then                        
+                        if  game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","DragonClaw","2") == 2 then
+                            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","DragonClaw","2")
+        
+                            elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","DragonClaw","2") == 0  then
+                                if game.Players.LocalPlayer.Data.Fragments.Value < 1500 then
+                                    if game.Players.LocalPlayer.Data.Level.Value > 1100 then                      
+                                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("RaidsNpc","Select","Flame")
+                                        _G.RiadSuper = true
+                                        _G.Raid = true
+                                        _G.Kill_Aura = true
+                                    elseif game.Players.LocalPlayer.Data.Level.Value <= 1100 then           
+                                            getgenv().SelectWeapon = "Fishman Karate"
+                                    end
+                                elseif game.Players.LocalPlayer.Data.Fragments.Value >= 1500 then
+                                    if getgenv().LevelFarm  == true then
+                                        getgenv().LevelFarm  = false
+                                    end
+                                    _G.RiadSuper  =  false
+                                    _G.Raid = false
+                                    _G.Kill_Aura = false
+                                    local args = {
+                                        [1] = "BlackbeardReward",
+                                        [2] = "DragonClaw",
+                                        [3] = "2"
+                                    }
+                                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                                end
+                            end
+                        end
+
+                        if (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Dragon Claw') and  game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Dragon Claw').Level.Value <= 300) or (game.Players.LocalPlayer.Character:FindFirstChild('Dragon Claw') and game.Players.LocalPlayer.Character:FindFirstChild('Dragon Claw').Level.Value <= 300) then
+                            getgenv().SelectWeapon = "Dragon Claw"
+                            if getgenv().LevelFarm  == false then
+                                getgenv().LevelFarm  = true
+                            end
+                        end
+
+                        if game.Players.LocalPlayer.Backpack:FindFirstChild("Dragon Claw") and game.Players.LocalPlayer.Backpack:FindFirstChild("Dragon Claw").Level.Value >= 300 and game.Players.LocalPlayer.Character.Humanoid.Health > 0 then
+                            local Beli = game:GetService("Players").LocalPlayer.Data.Beli.Value
+                            if Beli >= 300000 then
+                                local args = {
+                                    [1] = "BuySuperhuman"
+                                }
+                                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                            else
+                                
+                                getgenv().SelectWeapon = "Dragon Claw"
+                            end
+                        end
+                        if game.Players.LocalPlayer.Character:FindFirstChild("Dragon Claw") and game.Players.LocalPlayer.Character:FindFirstChild("Dragon Claw").Level.Value >= 300 and game.Players.LocalPlayer.Character.Humanoid.Health > 0 then
+                            local Beli = game:GetService("Players").LocalPlayer.Data.Beli.Value
+                            if Beli >= 300000 then
+                                local args = {
+                                    [1] = "BuySuperhuman"
+                                }
+                                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                            else
+                                
+                                getgenv().SelectWeapon = "Dragon Claw"
+                            end
+                        end
+                end
+            end)
+        end
+    end)
+
+    spawn(function()
+        while wait() do
+            if getgenv().Deathstep and SecondSea then
+                pcall(function()
+                    if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyDeathStep") == 2 then
+                    elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyDeathStep") == 0 then
+                        -- Check have Black Leg
+                        
+                        if not game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg') or not game.Players.localPlayer.Character:FindFirstChild('Black Leg') then
+                            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBlackLeg")
+                        end
+                        
+                        if (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg') and game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg').Level.Value <= 400) or (game.Players.localPlayer.Character:FindFirstChild('Black Leg')  and game.Players.localPlayer.Character:FindFirstChild('Black Leg').Level.Value <= 400) then
+                        
+                            getgenv().SelectWeapon = 'Black Leg'
+                        
+                            
+                        end
+                        
+                    if (game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg') and game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Black Leg').Level.Value >= 400) or (game.Players.localPlayer.Character:FindFirstChild('Black Leg')  and game.Players.localPlayer.Character:FindFirstChild('Black Leg').Level.Value >= 400) then
+                            _G.FramDeath = false
+                        if game.Players.LocalPlayer.Data.Level.Value > 1100 then  
+                            if game:GetService("Players").LocalPlayer.Data.Beli.Value >= 2500000 then
+                                if game:GetService("Players").LocalPlayer.Data.Fragments.Value >= 5000 then
+                                    _G.RiadD = false
+                                    _G.Next = false
+                                    _G.KillAura = false
+                                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyDeathStep")
+                                elseif game:GetService("Players").LocalPlayer.Data.Fragments.Value <= 5000 then
+                                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("RaidsNpc","Select","Flame")
+                                    _G.FramDeath = false
+                                    _G.RiadD = true
+                                    _G.Next = true
+                                    _G.KillAura = true
+                                end
+                            elseif game:GetService("Players").LocalPlayer.Data.Beli.Value <= 2500000 then
+                                if getgenv().LevelFarm  == false then
+                                    getgenv().LevelFarm  = true 
+                                end
+                                getgenv().SelectWeapon = 'Black Leg'
+                            
+                            end
+                        elseif game.Players.LocalPlayer.Data.Level.Value <= 1099 then  
+                            if getgenv().LevelFarm  == false then
+                                getgenv().LevelFarm  = true 
+                            end
+                                getgenv().SelectWeapon = 'Black Leg'
+                        end
+                    end
+                    end
+                end)
+            else
+                _G.RiadD = false
+                _G.Next = false
+                _G.KillAura = false
+            end
+        end
+    end)
+
+
+    ------------------------------------------------------------------- Auto SecondSea -------------------------------------------------------------------
+    spawn(function()
+        while wait() do
+            if getgenv().SecondSea then
+                pcall(function()
+                    if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress",
+                        "Detective") == 2 and OldWolrd then
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
+                    end
+                end)
+            end
+        end
+    end)
+
+
+
+
+    spawn(function()
+        while wait() do
+            if getgenv().SecondSea then
+                pcall(function()
+                    if game:GetService("Players").LocalPlayer.Data.Level.Value >= 700 and OldWolrd then
+                        Noclip5 = true
+
+                        if game.Workspace.Map.Ice.Door.CanCollide == true and game.Workspace.Map.Ice.Door.Transparency == 0 then
+                            if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild('Key') then
+
+                                CFneww = CFrame.new(1347.94153, 37.3493652, -1325.65613, 0.563168228, 8.23917858e-08,
+                                    0.826342106, -9.30935187e-08, 1, -3.62615928e-08, -0.826342106, -5.65057086e-08,
+                                    0.563168228)
+                                if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CFneww.Position).Magnitude <=
+                                    10 then
+                                    two(CFneww)
+                                    itemequip('Key')
+                                else
+                                    two(CFneww)
+                                end
+                            else
+                                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress",
+                                    "Detective")
+                            end
+                        elseif game.Workspace.Map.Ice.Door.CanCollide == false and game.Workspace.Map.Ice.Door.Transparency == 1 then
+                            for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                                if v.Name == 'Ice Admiral [Lv. 700] [Boss]' then
+                                    repeat
+                                        wait(.1)
+                                        if not game.Players.LocalPlayer.Character:FindFirstChild('HasBuso') then
+                                            game.ReplicatedStorage.Remotes.CommF_:InvokeServer('Buso')
+                                        end
+                                        itemequip(getgenv().SelectWeapon)
+                                        two(v.HumanoidRootPart.CFrame * CFrame.new(0, 30, 0))
+                                        v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+                                        v.Humanoid.JumpPower = 0
+                                        v.Humanoid.WalkSpeed = 0
+                                        v.HumanoidRootPart.CanCollide = false
+                                        v.Humanoid:ChangeState(14)
+                                    
+                                        sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                                    until getgenv().SecondSea == false or v.Humanoid.Health <= 0
+                                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
+                                end
+                            end
+                            getgenv().SecondSea = false
+
+                        end
+                    elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress","Detective") == 2 then
+                        wait(5)
+                    end
+                end)
             end
         end
     end)
