@@ -122,14 +122,16 @@ Main_1_left:toggle({
     name = "Auto SecondSea",
     def = false,
     callback = function(value)
-        getgenv().SecondSea = value
+        getgenv().SecondSeaF = value
+        getgenv().AllSet = value
 end})
 
 Main_1_left:toggle({
     name = "Auto ThirdSea",
     def = false,
     callback = function(value)
-        getgenv().ThirdSea = value
+        getgenv().A_ThirdSea = value
+        getgenv().AllSet = value
 end})
 
 function UseCode(Text)
@@ -228,6 +230,7 @@ Main_1_right:dropdown({
         def = false,
         callback = function(vu)
             getgenv().BossFarm = vu
+            getgenv().AllSet = vu
 
             if vu == false then
                 tween:Cancel()
@@ -239,7 +242,7 @@ Main_1_right:dropdown({
         def = false,
         callback = function(vu)
             getgenv().AllBossFarm = vu
-
+            getgenv().AllSet = vu
             if vu == false then
                 pcall(function()
                 tween:Cancel()  
@@ -1159,30 +1162,65 @@ function CheckQuest()
     end
 end
 
-function two(gotoCFrame)
-    pcall(function()
-        game.Players.LocalPlayer.Character.Humanoid.Sit = false
-    end)
-    if (game:GetService("Players")["LocalPlayer"].Character:WaitForChild('HumanoidRootPart').Position -
-        gotoCFrame.Position).Magnitude <= 250 then
+getgenv().ToTarget = function(p)
+    task.spawn(function()
         pcall(function()
-            tween:Cancel()
+            if game:GetService("Players").LocalPlayer:DistanceFromCharacter(p.Position) <= 250 then 
+                game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = p
+            elseif not game.Players.LocalPlayer.Character:FindFirstChild("Root")then 
+                local K = Instance.new("Part",game.Players.LocalPlayer.Character)
+                K.Size = Vector3.new(1,0.5,1)
+                K.Name = "Root"
+                K.Anchored = true
+                K.Transparency = 1
+                K.CanCollide = false
+                K.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,20,0)
+            end
+            local U = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position-p.Position).Magnitude
+            local z = game:service("TweenService")
+            local B = TweenInfo.new((p.Position-game.Players.LocalPlayer.Character.Root.Position).Magnitude/300,Enum.EasingStyle.Linear)
+            local S,g = pcall(function()
+            local q = z:Create(game.Players.LocalPlayer.Character.Root,B,{CFrame = p})
+            q:Play()
         end)
-        game:GetService("Players")["LocalPlayer"].Character:WaitForChild('HumanoidRootPart').CFrame = gotoCFrame
-    else
-        local tween_s = game:service "TweenService"
-        local info = TweenInfo.new(
-            (game:GetService("Players")["LocalPlayer"].Character:WaitForChild('HumanoidRootPart').Position -
-                gotoCFrame.Position).Magnitude / 300, Enum.EasingStyle.Linear)
-        local tween, err = pcall(function()
-            tween = tween_s:Create(game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart'), info, {
-                CFrame = gotoCFrame
-            })
-            tween:Play()
-        end)
-        if not tween then
-            return err
+        if not S then 
+            return g
         end
+        game.Players.LocalPlayer.Character.Root.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            if S and game.Players.LocalPlayer.Character:FindFirstChild("Root") then 
+                pcall(function()
+                    if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position-p.Position).Magnitude >= 20 then 
+                        spawn(function()
+                            pcall(function()
+                                if (game.Players.LocalPlayer.Character.Root.Position-game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 150 then 
+                                    game.Players.LocalPlayer.Character.Root.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                                else 
+                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=game.Players.LocalPlayer.Character.Root.CFrame
+                                end
+                            end)
+                        end)
+                    elseif (game.Players.LocalPlayer.Character.HumanoidRootPart.Position-p.Position).Magnitude >= 10 and(game.Players.LocalPlayer.Character.HumanoidRootPart.Position-p.Position).Magnitude < 20 then 
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = p
+                    elseif (game.Players.LocalPlayer.Character.HumanoidRootPart.Position-p.Position).Magnitude < 10 then 
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = p
+                    end
+                end)
+            end
+        end)
+    end)
+end
+
+function StopTween(target)
+    if not target then
+        _G.StopTween = true
+        wait()
+        getgenv().ToTarget(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+        wait()
+        if game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
+        end
+        _G.StopTween = false
+        _G.Clip = false
     end
 end
 
@@ -1200,7 +1238,7 @@ spawn(function()
                         StartMagnet = false
                         CheckQuest()
                         repeat wait() 
-                            two(CFrameQ)  
+                            getgenv().ToTarget(CFrameQ)  
                         until (CFrameQ.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 or not getgenv().LevelFarm 
                         if (CFrameQ.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 then
                         if game.Players.LocalPlayer.Character.Humanoid.Health > 0 then
@@ -1224,15 +1262,15 @@ spawn(function()
                                                 itemequip(getgenv().SelectWeapon)
                                                 StartMagnet = true               
                                                 if AttackRandomType == 1 then
-                                                    two(v.HumanoidRootPart.CFrame * CFrame.new(0, 20, 1))
+                                                    getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 20, 1))
                                                 elseif AttackRandomType == 2 then
-                                                    two(v.HumanoidRootPart.CFrame * CFrame.new(0, 1, 10))
+                                                    getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 1, 10))
                                                 elseif AttackRandomType == 3 then
-                                                    two(v.HumanoidRootPart.CFrame * CFrame.new(1, 1, -10))
+                                                    getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(1, 1, -10))
                                                 elseif AttackRandomType == 4 then
-                                                    two(v.HumanoidRootPart.CFrame * CFrame.new(10, 1, 0))
+                                                    getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(10, 1, 0))
                                                 elseif AttackRandomType == 5 then
-                                                    two(v.HumanoidRootPart.CFrame * CFrame.new(-10, 1, 0))
+                                                    getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(-10, 1, 0))
                                                 end
                                                 PosMon = v.HumanoidRootPart.CFrame
                                                 v.HumanoidRootPart.Size = Vector3.new(60,60,60)
@@ -1250,9 +1288,9 @@ spawn(function()
                         else
                             StartMagnet = false
                             if game:GetService("ReplicatedStorage"):FindFirstChild(Ms) then
-                                two(game:GetService("ReplicatedStorage"):FindFirstChild(Ms).HumanoidRootPart.CFrame)
+                                getgenv().ToTarget(game:GetService("ReplicatedStorage"):FindFirstChild(Ms).HumanoidRootPart.CFrame)
                             else
-                                two(CFramePuk)
+                                getgenv().ToTarget(CFramePuk)
                             end
                         end
                     end
@@ -1284,7 +1322,7 @@ spawn(function()
     spawn(function()
         pcall(function()
             game:GetService("RunService").Stepped:Connect(function()
-                if getgenv().LevelFarm or getgenv().AllBossFarm or getgenv().Deathstep then
+                if getgenv().LevelFarm or getgenv().AllBossFarm or getgenv().Deathstep or getgenv().SecondSeaF or getgenv().AllSet then
                     if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
                         local Noclip = Instance.new("BodyVelocity")
                         Noclip.Name = "BodyClip"
@@ -1367,10 +1405,10 @@ spawn(function()
     spawn(function()
         while wait() do
             pcall(function()
-                if  getgenv().LevelFarm or getgenv().AllBossFarm then
+                if  getgenv().LevelFarm or getgenv().AllBossFarm or getgenv().AllSet then
                     repeat task.wait(.3)
                         AttackNoCD()
-                    until not  getgenv().LevelFarm
+                    until not  getgenv().LevelFarm or not getgenv().AllSet
                 end
             end)
         end
@@ -1678,15 +1716,15 @@ spawn(function()
                                         end
                                         itemequip(getgenv().SelectWeapon)
                                         if AttackRandomType == 1 then
-                                            two(v.HumanoidRootPart.CFrame * CFrame.new(0, 20, 1))
+                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 20, 1))
                                         elseif AttackRandomType == 2 then
-                                            two(v.HumanoidRootPart.CFrame * CFrame.new(0, 1, 10))
+                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 1, 10))
                                         elseif AttackRandomType == 3 then
-                                            two(v.HumanoidRootPart.CFrame * CFrame.new(1, 1, -10))
+                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(1, 1, -10))
                                         elseif AttackRandomType == 4 then
-                                            two(v.HumanoidRootPart.CFrame * CFrame.new(10, 1, 0))
+                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(10, 1, 0))
                                         elseif AttackRandomType == 5 then
-                                            two(v.HumanoidRootPart.CFrame * CFrame.new(-10, 1, 0))
+                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(-10, 1, 0))
                                         end
                                         v.HumanoidRootPart.Size = Vector3.new(80, 80, 80)
                                         v.Humanoid.JumpPower = 0
@@ -1701,7 +1739,7 @@ spawn(function()
                     else
                         CheckBossQuest()
                         if not game:GetService("Workspace").Enemies:FindFirstChild(MsBoss) then           
-                            two(CFrameBoss)          
+                            getgenv().ToTarget(CFrameBoss)          
                         end
                     end
                 end)
@@ -1873,7 +1911,7 @@ spawn(function()
     ------------------------------------------------------------------- Auto SecondSea -------------------------------------------------------------------
     spawn(function()
         while wait() do
-            if getgenv().SecondSea then
+            if getgenv().SecondSeaF then
                 pcall(function()
                     if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress",
                         "Detective") == 2 and OldWolrd then
@@ -1889,7 +1927,7 @@ spawn(function()
 
     spawn(function()
         while wait() do
-            if getgenv().SecondSea then
+            if getgenv().SecondSeaF then
                 pcall(function()
                     if game:GetService("Players").LocalPlayer.Data.Level.Value >= 700 and OldWolrd then
                         Noclip5 = true
@@ -1902,10 +1940,10 @@ spawn(function()
                                     0.563168228)
                                 if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CFneww.Position).Magnitude <=
                                     10 then
-                                    two(CFneww)
+                                    getgenv().ToTarget(CFneww)
                                     itemequip('Key')
                                 else
-                                    two(CFneww)
+                                    getgenv().ToTarget(CFneww)
                                 end
                             else
                                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress",
@@ -1920,7 +1958,7 @@ spawn(function()
                                             game.ReplicatedStorage.Remotes.CommF_:InvokeServer('Buso')
                                         end
                                         itemequip(getgenv().SelectWeapon)
-                                        two(v.HumanoidRootPart.CFrame * CFrame.new(0, 30, 0))
+                                        getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 30, 0))
                                         v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                                         v.Humanoid.JumpPower = 0
                                         v.Humanoid.WalkSpeed = 0
@@ -1928,11 +1966,11 @@ spawn(function()
                                         v.Humanoid:ChangeState(14)
                                     
                                         sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
-                                    until getgenv().SecondSea == false or v.Humanoid.Health <= 0
+                                    until getgenv().SecondSeaF == false or v.Humanoid.Health <= 0
                                     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
                                 end
                             end
-                            getgenv().SecondSea = false
+                            getgenv().SecondSeaF = false
 
                         end
                     elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress","Detective") == 2 then
@@ -1943,34 +1981,38 @@ spawn(function()
         end
     end)
 
+    ------------------------------------------------------------------- Auto Sea -------------------------------------------------------------------
+
     spawn(function()
         while wait() do
-            if _G.Auto_New_World then
+            if getgenv().SecondSeaF then
                 pcall(function()
-                    if game.Players.LocalPlayer.Data.Level.Value >= 700 and World1 then
-                        _G.Auto_Farm_Level = false
+                    if game.Players.LocalPlayer.Data.Level.Value >= 700 and OldWolrd then
+                        getgenv().LevelFarm = false
                         if game.Workspace.Map.Ice.Door.CanCollide == true and game.Workspace.Map.Ice.Door.Transparency == 0 then
-                            repeat wait() getgenv().ToTarget(CFrame.new(4851.8720703125, 5.6514348983765, 718.47094726563)) until (CFrame.new(4851.8720703125, 5.6514348983765, 718.47094726563).Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 or not _G.Auto_New_World
+                            repeat wait() getgenv().ToTarget(CFrame.new(4851.8720703125, 5.6514348983765, 718.47094726563)) until (CFrame.new(4851.8720703125, 5.6514348983765, 718.47094726563).Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 or not getgenv().SecondSeaF
                             wait(1)
                             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DressrosaQuestProgress","Detective")
-                            EquipWeapon("Key")
+                            itemequip("Key")
                             local pos2 = CFrame.new(1347.7124, 37.3751602, -1325.6488)
-                            repeat wait() getgenv().ToTarget(pos2) until (pos2.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 or not _G.Auto_New_World
+                            repeat wait() getgenv().ToTarget(pos2) until (pos2.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 3 or not getgenv().SecondSeaF
                             wait(3)
                         elseif game.Workspace.Map.Ice.Door.CanCollide == false and game.Workspace.Map.Ice.Door.Transparency == 1 then
                             if game:GetService("Workspace").Enemies:FindFirstChild("Ice Admiral [Lv. 700] [Boss]") then
                                 for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
                                     if v.Name == "Ice Admiral [Lv. 700] [Boss]" and v.Humanoid.Health > 0 then
                                         repeat wait()
-                                            AutoHaki()
-                                            EquipWeapon(_G.Select_Weapon)
+                                            if not game.Players.LocalPlayer.Character:FindFirstChild('HasBuso') then
+                                                game.ReplicatedStorage.Remotes.CommF_:InvokeServer('Buso')
+                                            end
+                                            itemequip(getgenv().SelectWeapon)
                                             v.HumanoidRootPart.CanCollide = false
                                             v.HumanoidRootPart.Size = Vector3.new(60,60,60)
                                             v.HumanoidRootPart.Transparency = 1
-                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+                                            getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0,20,0))
                                             game:GetService("VirtualUser"):CaptureController()
                                             game:GetService("VirtualUser"):Button1Down(Vector2.new(1280, 870),workspace.CurrentCamera.CFrame)
-                                        until v.Humanoid.Health <= 0 or not v.Parent or not _G.Auto_New_World
+                                        until v.Humanoid.Health <= 0 or not v.Parent or not getgenv().SecondSeaF
                                         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
                                     end
                                 end
@@ -1980,6 +2022,47 @@ spawn(function()
                         else
                             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
                         end
+                    end
+                end)
+            end
+        end
+    end)
+
+    spawn(function()
+        while wait() do
+            if getgenv().A_ThirdSea then
+                pcall(function()
+                    if SecondSea then          
+                        if game:GetService("Players").LocalPlayer.Data.Level.Value >= 1500  then
+                            if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("ZQuestProgress","Check") == 0 then
+                                wait(1.8)
+                                if game:GetService("Workspace").Enemies:FindFirstChild("rip_indra [Lv. 1500] [Boss]") then
+                                    for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                                        if v.Name == "rip_indra [Lv. 1500] [Boss]" then
+                                            repeat wait()
+                                                if not game.Players.LocalPlayer.Character:FindFirstChild('HasBuso') then
+                                                    game.ReplicatedStorage.Remotes.CommF_:InvokeServer('Buso')
+                                                end
+                                                itemequip(getgenv().SelectWeapon)
+                                                getgenv().ToTarget(v.HumanoidRootPart.CFrame * CFrame.new(0,30,0))
+                                                v.HumanoidRootPart.Size = Vector3.new(50,50,50)
+                                                v.HumanoidRootPart.CanCollide = false
+                                                v.Humanoid.WalkSpeed = 0
+                                                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelZou")
+                                                sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge)
+                                            until getgenv().A_ThirdSea == false or v.Humanoid.Health <= 0 or not v.Parent
+                                        end
+                                    end
+                                elseif not game:GetService("Workspace").Enemies:FindFirstChild("rip_indra [Lv. 1500] [Boss]") then
+                                    if (CFrame.new(-1926.3221435547, 12.819851875305, 1738.3092041016).Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 10 then
+                                        wait(1.5)
+                                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("ZQuestProgress","Begin")
+                                    else
+                                        getgenv().ToTarget(CFrame.new(-1926.3221435547, 12.819851875305, 1738.3092041016))
+                                    end
+                                end
+                            end
+                        end  
                     end
                 end)
             end
